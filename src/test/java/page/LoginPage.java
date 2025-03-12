@@ -1,45 +1,40 @@
 package page;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.How;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
+import org.openqa.selenium.support.PageFactory;
 
-import base.BasePage;
 import java.time.Duration;
 
-public class LoginPage extends BasePage {
-    private WebDriver driver;
-    private WebDriverWait wait;
-
-    private By usernameField = By.id("user-name");
-    private By passwordField = By.id("password");
-    private By loginButton = By.id("login-button");
-    private By errorMessage = By.cssSelector("h3[data-test='error']");
+public class LoginPage {
+    WebDriver driver;
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
-        InitPage();
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        PageFactory.initElements(driver, this);
     }
 
-    public void enterUsername(String username) {
-        driver.findElement(usernameField).sendKeys(username);
-    }
+    @FindBy(id = "user-name")
+    WebElement usernameInput;
 
-    public void enterPassword(String password) {
-        driver.findElement(passwordField).sendKeys(password);
-    }
+    @FindBy(id = "password")
+    WebElement passwordInput;
 
-    public void clickLogin() {
-        driver.findElement(loginButton).click();
+    @FindBy(id = "login-button")
+    WebElement loginButton;
+
+    @FindBy(css = ".error-message-container")
+    WebElement errorMessage;
+
+    public void login(String username, String password) {
+        usernameInput.sendKeys(username);
+        passwordInput.sendKeys(password);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        loginButton.click();
     }
 
     public String getErrorMessage() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage)).getText();
+        return errorMessage.getText();
     }
 }

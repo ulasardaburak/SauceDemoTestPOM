@@ -1,30 +1,39 @@
 package test;
 
-import base.BaseTest;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import page.LoginPage;
 
 import java.time.Duration;
 
-public class LoginTest extends BaseTest {
+public class LoginTest {
+        WebDriver driver;
+        LoginPage loginPage;
 
-    System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        @BeforeClass
+        public void setup() {
+                System.setProperty("webdriver.chrome.driver", "src/test/java/src/driver/chromedriver.exe");
+                driver = new ChromeDriver();
+                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+                driver.manage().window().maximize();
+                driver.get("https://www.saucedemo.com/");
+                loginPage = new LoginPage(driver);
+        }
 
+        @Test
+        public void testInvalidLogin() {
+                loginPage.login("wrong_user", "wrong_pass");
+                String actualError = loginPage.getErrorMessage();
+                String expectedError = "Epic sadface: Username and password do not match any user in this service";
+                Assert.assertEquals(actualError, expectedError, "Unexpected error message!");
+        }
 
-    @Test
-    public void loginTest() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name"))).sendKeys("standard_user");
-        driver.findElement(By.id("password")).sendKeys("secret_sauce");
-        driver.findElement(By.id("login-button")).click();
-
-        WebElement productsTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("title")));
-        Assert.assertTrue(productsTitle.isDisplayed(), "Login failed!");
-    }
+        @AfterClass
+        public void teardown() {
+                driver.quit();
+        }
 }

@@ -11,9 +11,10 @@ public class BaseTest {
     protected static WebDriver driver;
     String baseUrl = "https://www.saucedemo.com/";
 
+
     @BeforeTest
     public static void setUp(){
-    System.setProperty("webdriver.chrome.driver", "src/driver/chromedriver.exe");
+    System.setProperty("webdriver.chrome.driver", "src/test/java/src/driver/chromedriver.exe");
     driver = new ChromeDriver();
     driver.get("baseUrl");
     driver.manage().window().maximize();
